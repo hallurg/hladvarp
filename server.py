@@ -15,6 +15,8 @@ RECORDINGS_DIR = ROOT / "recordings"
 UPLOAD_TOKEN = os.environ.get("HLADVARP_STUDIO_TOKEN", "").strip()
 ENABLE_MP3 = os.environ.get("HLADVARP_ENABLE_MP3", "").strip() == "1"
 FFMPEG = shutil.which("ffmpeg")
+HOST = os.environ.get("HOST", "127.0.0.1")
+PORT = int(os.environ.get("PORT", "8000"))
 
 
 def safe_file_name(raw_name: str, content_type: str) -> str:
@@ -82,30 +84,35 @@ class PodcastHandler(SimpleHTTPRequestHandler):
         super().__init__(*args, directory=str(ROOT), **kwargs)
 
     def do_GET(self):
-        if urlparse(self.path).path != "/api/health":
-            super().do_GET()
+        path = urlparse(self.path).path
+
+        if path == "/api/health":
+            json_response(self, 200, {
+                "ok": True,
+                "storage": {
+                    "recordingsDir": str(RECORDINGS_DIR),
+                    "exists": RECORDINGS_DIR.exists(),
+                },
+                "uploadAuth": {
+                    "tokenRequired": bool(UPLOAD_TOKEN),
+                    "mode": "bearer-token" if UPLOAD_TOKEN else "local-open",
+                },
+                "mp3": {
+                    "enabled": ENABLE_MP3,
+                    "ffmpegAvailable": bool(FFMPEG),
+                },
+                "browserRecording": {
+                    "requiresSecureContext": True,
+                    "localhostAllowed": True,
+                    "productionHeader": "Permissions-Policy: microphone=(self), camera=(), geolocation=()",
+                },
+            })
             return
 
-        json_response(self, 200, {
-            "ok": True,
-            "storage": {
-                "recordingsDir": str(RECORDINGS_DIR),
-                "exists": RECORDINGS_DIR.exists(),
-            },
-            "uploadAuth": {
-                "tokenRequired": bool(UPLOAD_TOKEN),
-                "mode": "bearer-token" if UPLOAD_TOKEN else "local-open",
-            },
-            "mp3": {
-                "enabled": ENABLE_MP3,
-                "ffmpegAvailable": bool(FFMPEG),
-            },
-            "browserRecording": {
-                "requiresSecureContext": True,
-                "localhostAllowed": True,
-                "productionHeader": "Permissions-Policy: microphone=(self), camera=(), geolocation=()",
-            },
-        })
+        if path in {"/", "/studio-recorder", "/studio-recorder/"}:
+            self.path = "/index.html"
+
+        super().do_GET()
 
     def do_POST(self):
         if urlparse(self.path).path != "/api/recordings":
@@ -177,7 +184,7 @@ class PodcastHandler(SimpleHTTPRequestHandler):
 
 
 def run():
-    address = ("127.0.0.1", 8000)
+    address = (HOST, PORT)
     server = ThreadingHTTPServer(address, PodcastHandler)
     print(f"Hlaðvarp Studio keyrir á http://{address[0]}:{address[1]}")
     print(f"Upptökur vistast í {RECORDINGS_DIR}")

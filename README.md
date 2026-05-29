@@ -12,6 +12,8 @@ Farðu síðan á `http://localhost:8000`.
 
 Upptaka í vafra þarf öruggt samhengi. `localhost` telst öruggt í þróun, en production þarf HTTPS.
 
+Tólið má líka keyra undir `/studio-recorder/` í production. Serverinn þjónar sama appi á `/` og `/studio-recorder/`.
+
 ## Hvað er komið
 
 - Hljóðupptaka beint í vafra með `MediaRecorder`.
@@ -32,6 +34,10 @@ Upptaka í vafra þarf öruggt samhengi. `localhost` telst öruggt í þróun, e
 ```
 
 Sjá `HLADVARP_INTEGRATION.md` fyrir hnapp og production stillingar.
+
+Health/readiness upplýsingar eru á `http://localhost:8000/api/health`.
+
+Sjá `DEPLOYMENT.md` fyrir Docker, Caddy/reverse proxy og production keyrslu.
 
 ## Production atriði
 

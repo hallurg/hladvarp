@@ -1,0 +1,19 @@
+hladvarp.com {
+  encode zstd gzip
+
+  # Existing public site/admin config lives here.
+
+  handle /studio-recorder* {
+    header Permissions-Policy "microphone=(self), camera=(), geolocation=()"
+    reverse_proxy 127.0.0.1:8000
+  }
+
+  handle /api/recordings {
+    header Permissions-Policy "microphone=(self), camera=(), geolocation=()"
+    reverse_proxy 127.0.0.1:8000
+  }
+
+  handle /api/health {
+    reverse_proxy 127.0.0.1:8000
+  }
+}
