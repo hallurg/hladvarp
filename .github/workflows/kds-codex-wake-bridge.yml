@@ -1,0 +1,45 @@
+name: KDS Codex Wake Bridge
+
+on:
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: "GitHub issue number to use as the wake target"
+        required: false
+        default: "7"
+      command:
+        description: "Command/context to send to the wake bridge"
+        required: false
+        default: "Manual KDS wake request"
+  schedule:
+    # Codex/KDS heartbeat check every four hours.
+    # The scheduled run only dispatches to CODEX_BRIDGE_WEBHOOK_URL if configured;
+    # otherwise it logs a no-op to avoid GitHub comment spam.
+    - cron: "17 */4 * * *"
+
+permissions:
+  contents: read
+  issues: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  wake-codex:
+    name: Wake or heartbeat Codex bridge
+    runs-on: ubuntu-latest
+    if: github.event_name != 'issue_comment' || github.event.issue.pull_request == null
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Run KDS Codex wake bridge
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CODEX_BRIDGE_WEBHOOK_URL: ${{ secrets.CODEX_BRIDGE_WEBHOOK_URL }}
+          CODEX_BRIDGE_SHARED_SECRET: ${{ secrets.CODEX_BRIDGE_SHARED_SECRET }}
+          KDS_ALLOWED_ACTORS: "hallurg"
+        run: python3 .github/scripts/kds_codex_wake.py
