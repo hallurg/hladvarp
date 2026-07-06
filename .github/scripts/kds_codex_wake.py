@@ -102,7 +102,9 @@ def issue_comment_context(event: dict[str, Any]) -> WakeContext:
     body_l = body.lower()
 
     # Do not recursively treat actual reports as wake commands.
-    if REPORT_TOKEN in body_l:
+    # Important: a wake request may quote the marker as an expected result, so only
+    # suppress comments that *start* as actual Codex reports.
+    if body_l.lstrip().startswith(REPORT_TOKEN):
         return WakeContext(
             event_name="issue_comment",
             repo=repo,
