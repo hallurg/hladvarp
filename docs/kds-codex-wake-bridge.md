@@ -26,7 +26,7 @@ Triggers:
 
 - `issue_comment` when an explicit Codex/KDS wake phrase is posted
 - `workflow_dispatch` for manual triggering from GitHub Actions
-- `schedule` every 4 hours for heartbeat dispatch
+- `schedule` every hour for heartbeat dispatch
 
 ## Trigger phrases
 
