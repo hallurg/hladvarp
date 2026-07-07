@@ -14,10 +14,10 @@ on:
         required: false
         default: "Manual KDS wake request"
   schedule:
-    # Codex/KDS heartbeat check every four hours.
+    # Codex/KDS heartbeat check every hour.
     # The scheduled run only dispatches to CODEX_BRIDGE_WEBHOOK_URL if configured;
     # otherwise it logs a no-op to avoid GitHub comment spam.
-    - cron: "17 */4 * * *"
+    - cron: "17 * * * *"
 
 permissions:
   contents: read
