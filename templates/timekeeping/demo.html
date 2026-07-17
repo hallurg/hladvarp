@@ -1,0 +1,185 @@
+{% load static %}
+<!doctype html>
+<html lang="is">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Starfsmannahald | Stimpilklukka demo</title>
+    <link rel="stylesheet" href="{% static 'css/timekeeping_demo.css' %}">
+</head>
+<body>
+    <header class="app-header">
+        <a class="brand" href="/starfsmannahald/demo/" aria-label="Starfsmannahald demo">
+            <span class="brand-mark">KN</span>
+            <span>
+                <strong>Starfsmannahald</strong>
+                <small>Mobile setup + stimpilklukka</small>
+            </span>
+        </a>
+        <nav class="top-nav" aria-label="Demo hlutar">
+            <a href="#setup">Setup</a>
+            <a href="#clock">Stimplun</a>
+            <a href="#manager">Yfirsýn</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-copy">
+                <p class="eyebrow">P2 demo / safe data only</p>
+                <h1>Tengja síma við stimpilklukku á fjórum skrefum.</h1>
+                <p>
+                    Þetta er sýnilegt demo-flæði fyrir farsíma og spjaldtölvu. Það sýnir onboarding,
+                    innstimplun, útstimplun, núverandi stöðu, feril, leiðréttingar, samþykki og skýrsluyfirlit.
+                </p>
+                <div class="hero-actions">
+                    <a class="button primary" href="#setup">Byrja mobile setup</a>
+                    <a class="button secondary" href="#clock">Skoða kerfið</a>
+                </div>
+            </div>
+            <div class="phone-shell" aria-label="Síma demo">
+                <div class="phone-top">
+                    <span>KN Time</span>
+                    <strong id="phoneStatus">Ótengt</strong>
+                </div>
+                <div class="phone-card">
+                    <span class="status-pill amber" id="setupPill">Skref 1 af 4</span>
+                    <h2 id="phoneStepTitle">{{ setup_steps.0.title }}</h2>
+                    <p id="phoneStepText">{{ setup_steps.0.text }}</p>
+                </div>
+                <div class="pair-code" aria-label="Demo tengikóði">
+                    <span>Demo kóði</span>
+                    <strong>KN-0427</strong>
+                </div>
+                <div class="phone-actions">
+                    <button class="button secondary" id="prevSetup" type="button">Til baka</button>
+                    <button class="button primary" id="nextSetup" type="button">Næsta</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="setup" class="content-band">
+            <div class="section-heading">
+                <p class="eyebrow">Mobile setup fyrst</p>
+                <h2>Uppsetningarflæði</h2>
+                <span>Demo-only, engin leyndarmál eða raunverulegir tengikóðar.</span>
+            </div>
+            <div class="setup-grid">
+                {% for step in setup_steps %}
+                <article class="setup-step" data-step="{{ forloop.counter0 }}">
+                    <span>{{ step.meta }}</span>
+                    <strong>{{ forloop.counter }}. {{ step.title }}</strong>
+                    <p>{{ step.text }}</p>
+                </article>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section id="clock" class="split-band">
+            <div class="clock-panel">
+                <p class="eyebrow">Starfsmaður</p>
+                <h2>Stimplun og núverandi staða</h2>
+                <div class="current-status">
+                    <span id="clockState">Ekki stimplað inn</span>
+                    <strong id="clockTime">--:--</strong>
+                    <small id="clockNote">Demo staða. Engin færsla vistast.</small>
+                </div>
+                <div class="clock-actions">
+                    <button class="button primary" id="clockIn" type="button">Stimpla inn</button>
+                    <button class="button secondary" id="clockOut" type="button">Stimpla út</button>
+                </div>
+            </div>
+            <div class="history-panel">
+                <div class="section-heading compact">
+                    <p class="eyebrow">Ferill</p>
+                    <h2>Dagurinn</h2>
+                </div>
+                <div class="history-list" id="historyList">
+                    {% for row in history %}
+                    <article>
+                        <time>{{ row.time }}</time>
+                        <span>{{ row.event }}</span>
+                        <small>{{ row.source }} · {{ row.state }}</small>
+                    </article>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <section id="manager" class="content-band">
+            <div class="section-heading">
+                <p class="eyebrow">Yfirmaður / admin</p>
+                <h2>Leiðréttingar, samþykki og skýrslur</h2>
+                <span>Þetta sýnir rekstrarflæðið áður en production tengingar eru fullkláraðar.</span>
+            </div>
+            <div class="manager-grid">
+                <section class="approval-lane">
+                    <h3>Leiðréttingar</h3>
+                    {% for item in corrections %}
+                    <article class="approval-card">
+                        <strong>{{ item.employee }}</strong>
+                        <p>{{ item.request }}</p>
+                        <span>{{ item.status }} · {{ item.manager }}</span>
+                    </article>
+                    {% endfor %}
+                </section>
+                <section class="report-lane">
+                    <h3>Skýrsluyfirlit</h3>
+                    <div class="report-grid">
+                        {% for item in reports %}
+                        <article class="report-card {{ item.tone }}">
+                            <span>{{ item.label }}</span>
+                            <strong>{{ item.value }}</strong>
+                        </article>
+                        {% endfor %}
+                    </div>
+                </section>
+            </div>
+        </section>
+
+        <section class="content-band readiness">
+            <div>
+                <p class="eyebrow">Readiness</p>
+                <h2>Hvað er virkt, hvað er demo-only?</h2>
+            </div>
+            <div class="readiness-grid">
+                <article>
+                    <strong>Til í núverandi kerfi</strong>
+                    <p>Starfsmenn, QR/starfsmannanúmer og API-aðgerðir fyrir inn/út stimplun eru þegar til í `starfsfolk`.</p>
+                </article>
+                <article>
+                    <strong>Demo-only hér</strong>
+                    <p>Mobile wizard, pair code, takkaflæði, history update og skýrslukort eru örugg demo-gögn.</p>
+                </article>
+                <article>
+                    <strong>Production eftir</strong>
+                    <p>Auth/session, device pairing, recovery, audit policy, admin approvals, exports og raunveruleg mobile prófun.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="content-band readiness">
+            <div>
+                <p class="eyebrow">API staða</p>
+                <h2>Stimpilklukka er komin með raunverulegan API-grunn.</h2>
+            </div>
+            <div class="readiness-grid">
+                <article>
+                    <strong>Komið í API</strong>
+                    <p>Starfsmenn, dagleg mæting, símatæki, append-only atburðasaga, núverandi staða, leiðréttingarbeiðnir og samþykkt/höfnun stjórnanda eru komin sem `starfsfolk` API grunnur.</p>
+                </article>
+                <article>
+                    <strong>Sýnilegt demo hér</strong>
+                    <p>Þessi síða er enn örugg visual demo-síða. Hún sýnir flæðið, en notar ekki innskráða session eða raunverulegan síma í vafranum.</p>
+                </article>
+                <article>
+                    <strong>Næsta production-skref</strong>
+                    <p>Tengja auth/mobile UI við nýju API-endpointana, keyra migration í réttu production targeti og gera raunprófun á síma/spjaldtölvu áður en þetta verður launa/audit tilbúið.</p>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <script src="{% static 'js/timekeeping_demo.js' %}"></script>
+</body>
+</html>

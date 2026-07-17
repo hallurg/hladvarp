@@ -1,0 +1,150 @@
+{% extends "askrift/base.html" %}
+
+{% block title %}Operator billing | Kaupfjelag{% endblock %}
+
+{% block content %}
+<section class="hero operator-hero">
+    <div class="hero-copy">
+        <p class="eyebrow">Revenue Gate back office</p>
+        <h1>Manual billing dashboard.</h1>
+        <p>
+            Operator view for subscription applications, customer tracking, manual invoice prep, and month-end billing review.
+            This surface does not collect payments, call providers, send invoices, or enforce access.
+        </p>
+        <div class="hero-actions">
+            <a class="button primary" href="#customers">Review customers</a>
+            <a class="button secondary" href="/askrift/operator/export.csv">Export CSV</a>
+        </div>
+    </div>
+    <div class="ops-panel" aria-label="Manual billing summary">
+        <article>
+            <span>Needs review</span>
+            <strong>{{ review_count }}</strong>
+        </article>
+        <article>
+            <span>Draft month-end amount</span>
+            <strong>{{ total_due }} kr.</strong>
+        </article>
+        <article>
+            <span>Net / VSK estimate</span>
+            <strong>{{ total_net }} / {{ total_vat }}</strong>
+        </article>
+        <article>
+            <span>Payment automation</span>
+            <strong>Off</strong>
+        </article>
+    </div>
+</section>
+
+<section class="content-band">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Notifications</p>
+            <h2>New account/application queue</h2>
+        </div>
+        <span>Prototype notification list. No email/SMS is sent.</span>
+    </div>
+    <div class="notification-list">
+        {% for item in notifications %}
+        <article>
+            <strong>{{ item.podcast }}</strong>
+            <span>{{ item.contact }} · {{ item.plan }} · {{ item.status }}</span>
+            <p>{{ item.notes }}</p>
+        </article>
+        {% empty %}
+        <article>
+            <strong>No pending notifications</strong>
+            <span>Operator queue is clear.</span>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section id="customers" class="content-band">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Customer registry</p>
+            <h2>Customer summary list</h2>
+        </div>
+        <div class="action-row">
+            <a class="button secondary" href="/askrift/operator/pricing/">Pricing admin</a>
+            <a class="button secondary" href="/askrift/operator/export.csv">CSV for invoice prep</a>
+        </div>
+    </div>
+    <div class="table-shell">
+        <table class="billing-table">
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Product / storefront</th>
+                    <th>Subscription</th>
+                    <th>Status</th>
+                    <th>Billing signal</th>
+                    <th>Status</th>
+                    <th>Open</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for customer in customers %}
+                <tr>
+                    <td>
+                        <strong>{{ customer.customer }}</strong>
+                        <span>{{ customer.organization }} · {{ customer.contact }}</span>
+                    </td>
+                    <td>{{ customer.product }}<span>{{ customer.storefront }}</span></td>
+                    <td>{{ customer.plan }}<span>{{ customer.podcast }}</span></td>
+                    <td>{{ customer.active_label }}</td>
+                    <td>{{ customer.billing_status }}<span>{{ customer.gross }} kr. með VSK</span></td>
+                    <td><code>{{ customer.status }}</code></td>
+                    <td><a class="text-link" href="/askrift/operator/customer/{{ customer.slug }}/">Customer sheet</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="split-band">
+    <div>
+        <p class="eyebrow">Month-end report</p>
+        <h2>One week before month-end, prepare the manual invoice list.</h2>
+        <p>
+            The export gives operator a copyable list for Kontó or another external invoicing system.
+            Payment status stays manual until CEO later approves provider-backed payment automation.
+        </p>
+    </div>
+    <div class="report-card">
+        <strong>Manual report checklist</strong>
+        <ul>
+            <li>Confirm customers marked pending, unpaid, or needs_review.</li>
+            <li>Confirm amount, billing month, and product/podcast relation.</li>
+            <li>Use net amount for Kontó line entry when VAT is added by the invoice tool.</li>
+            <li>Review gross, net, VSK, discount/free-time, and final billable amount.</li>
+            <li>Update manual status after external invoice/payment action.</li>
+        </ul>
+    </div>
+</section>
+
+<section class="content-band">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Workflow</p>
+            <h2>Manual billing process</h2>
+        </div>
+        <span>No checkout, no webhook, no automatic charging.</span>
+    </div>
+    <div class="workflow-grid">
+        {% for step in operator_workflow %}
+        <article>
+            <span>{{ forloop.counter }}</span>
+            <p>{{ step }}</p>
+        </article>
+        {% endfor %}
+    </div>
+    <div class="state-row" aria-label="Manual tracking statuses">
+        {% for state in tracking_states %}
+        <code>{{ state }}</code>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

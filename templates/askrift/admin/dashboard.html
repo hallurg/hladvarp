@@ -1,0 +1,149 @@
+{% extends "askrift/admin/base_admin.html" %}
+
+{% block admin_content %}
+<div class="admin-heading">
+    <div>
+        <p class="eyebrow">Yfirlit</p>
+        <h1>Account control room</h1>
+    </div>
+    <div class="action-row">
+        <a class="button secondary" href="{% url 'askrift_admin_storefront_preview' 'hladvarp' %}">Preview Hlaðvarp</a>
+        <a class="button primary" href="{% url 'askrift_hladvarp' %}">Opna public flow</a>
+    </div>
+</div>
+
+<div class="metric-grid">
+    <article><span>Vörur</span><strong>{{ stats.products }}</strong></article>
+    <article><span>Viðskiptavinir</span><strong>{{ stats.customers }}</strong></article>
+    <article><span>Virkar áskriftir</span><strong>{{ stats.active_subscriptions }}</strong></article>
+    <article><span>Þarf yfirferð</span><strong>{{ stats.needs_review }}</strong></article>
+    <article><span>Greiddar</span><strong>{{ stats.paid }}</strong></article>
+    <article><span>Ógreiddar</span><strong>{{ stats.unpaid }}</strong></article>
+    <article><span>Tekjur m/VSK</span><strong>{{ stats.gross_revenue|floatformat:0 }}</strong></article>
+    <article><span>VSK áætlun</span><strong>{{ stats.vat_estimate|floatformat:0 }}</strong></article>
+    <article><span>Reikningsdrög</span><strong>{{ stats.invoice_drafts }}</strong></article>
+</div>
+
+<div class="admin-grid two">
+    <section class="admin-panel">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Aðgerðir</p>
+                <h2>Þarf athygli</h2>
+            </div>
+        </div>
+        <div class="notification-list">
+            {% for subscription in review_subscriptions %}
+            <article>
+                <strong>{{ subscription.customer.name }}</strong>
+                <span>{{ subscription.plan.name }} · {{ subscription.get_status_display }}</span>
+                <p>{{ subscription.operator_note|default:"Engin athugasemd." }}</p>
+                <a class="text-link" href="{{ subscription.customer.get_absolute_url }}">Opna viðskiptavin</a>
+            </article>
+            {% empty %}
+            <article><strong>Engin opin yfirferð</strong><span>Queue er tóm.</span></article>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="admin-panel">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Entitlements</p>
+                <h2>Auglýsingareglur</h2>
+            </div>
+        </div>
+        <div class="notification-list">
+            {% for rule in entitlements %}
+            <article>
+                <strong>{{ rule.name }}</strong>
+                <span>{{ rule.product.public_name }} · {{ rule.get_downstream_system_display }}</span>
+                <p>{% if rule.requires_paid_subscription %}Krefst greiddrar áskriftar.{% else %}Krefst ekki greiðslu.{% endif %} Birting: {{ rule.is_live|yesno:"í gangi,ekki í gangi" }}.</p>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+<div class="admin-grid two">
+    <section class="admin-panel">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Ógreitt / overdue</p>
+                <h2>Innheimtuatriði</h2>
+            </div>
+        </div>
+        <div class="notification-list">
+            {% for subscription in unpaid_subscriptions %}
+            <article>
+                <strong>{{ subscription.customer.name }}</strong>
+                <span>{{ subscription.plan.name }} · {{ subscription.get_status_display }}</span>
+                <p>Næsta gjalddagi: {{ subscription.next_billing_date|default:"óskráð" }}. Auglýsingakerfi: {% if subscription.advertising_visible %}virkt{% else %}falið/lokað{% endif %}.</p>
+                <a class="text-link" href="{{ subscription.customer.get_absolute_url }}">Opna viðskiptavin</a>
+            </article>
+            {% empty %}
+            <article><strong>Engar ógreiddar færslur</strong><span>Engin innheimtuaðgerð bíður.</span></article>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="admin-panel">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Hlutverk</p>
+                <h2>Admin permissions</h2>
+            </div>
+        </div>
+        <div class="notification-list">
+            {% for role in roles %}
+            <article>
+                <strong>{{ role.name }}</strong>
+                <span>{% if role.is_active %}Virkt{% else %}Óvirkt{% endif %}</span>
+                <p>{{ role.description|default:"Engin lýsing." }}</p>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+<section class="admin-panel">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Kerfistengingar</p>
+            <h2>Staða án leyndarmála</h2>
+        </div>
+    </div>
+    <div class="table-shell">
+        <table class="billing-table">
+            <thead><tr><th>Kerfi</th><th>Vara</th><th>Staða</th><th>Route</th><th>Samantekt</th></tr></thead>
+            <tbody>
+                {% for item in integrations %}
+                <tr>
+                    <td><strong>{{ item.system_name }}</strong></td>
+                    <td>{{ item.product.public_name }}</td>
+                    <td><code>{{ item.get_state_display }}</code></td>
+                    <td>{{ item.public_route|default:"-" }}</td>
+                    <td>{{ item.safe_summary }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="admin-panel">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Audit</p>
+            <h2>Nýjustu færslur</h2>
+        </div>
+    </div>
+    <div class="state-row">
+        {% for event in audit_events %}
+        <code>{{ event.created_at|date:"d.m.Y H:i" }} · {{ event.action }}</code>
+        {% empty %}
+        <code>Engin audit færsla enn.</code>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

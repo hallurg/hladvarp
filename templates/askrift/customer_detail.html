@@ -1,0 +1,151 @@
+{% extends "askrift/base.html" %}
+
+{% block title %}Customer sheet | Kaupfjelag{% endblock %}
+
+{% block content %}
+<section class="hero detail-hero">
+    <div class="hero-copy">
+        <p class="eyebrow">Customer sheet</p>
+        <h1>{{ customer.customer }}</h1>
+        <p>
+            Dedicated operator sheet for contact data, subscription terms, billing math, discounts, free time, review state,
+            and manual notes. This prototype does not persist edits or trigger billing.
+        </p>
+        <div class="hero-actions">
+            <a class="button primary" href="/askrift/operator/">Back to registry</a>
+            <a class="button secondary" href="/askrift/operator/export.csv">Export CSV</a>
+        </div>
+    </div>
+    <div class="ops-panel" aria-label="Customer billing summary">
+        <article>
+            <span>Gross customer price</span>
+            <strong>{{ customer.gross }} kr.</strong>
+        </article>
+        <article>
+            <span>Net for invoice tool</span>
+            <strong>{{ customer.net }} kr.</strong>
+        </article>
+        <article>
+            <span>VSK {{ customer.vat_rate }}%</span>
+            <strong>{{ customer.vat }} kr.</strong>
+        </article>
+    </div>
+</section>
+
+<section class="content-band">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Contact and subscription</p>
+            <h2>Editable fields for the next database phase</h2>
+        </div>
+        <span>Prototype-only form layout. No data is saved.</span>
+    </div>
+    <div class="detail-grid">
+        <article>
+            <span>Customer</span>
+            <strong>{{ customer.organization }}</strong>
+            <p>{{ customer.contact }} · {{ customer.email }}</p>
+        </article>
+        <article>
+            <span>Product</span>
+            <strong>{{ customer.product }}</strong>
+            <p>{{ customer.storefront }} · {{ customer.podcast }}</p>
+        </article>
+        <article>
+            <span>Plan</span>
+            <strong>{{ customer.plan }}</strong>
+            <p>{{ customer.cycle }} · next billing {{ customer.next_billing }}</p>
+        </article>
+        <article>
+            <span>Status</span>
+            <strong>{{ customer.status }}</strong>
+            <p>{{ customer.billing_status }} · {{ customer.review_status }}</p>
+        </article>
+    </div>
+</section>
+
+<section class="split-band">
+    <div>
+        <p class="eyebrow">Discounts and free time</p>
+        <h2>Promotional terms stay visible.</h2>
+        <p>
+            Normal price, discount/free-time, final billable amount, and reason remain visible so revenue is not hidden
+            from the operator or bookkeeper review package.
+        </p>
+    </div>
+    <div class="report-card">
+        <dl class="fact-list">
+            <div><dt>Normal price</dt><dd>{{ customer.normal_amount }} kr. með VSK</dd></div>
+            <div><dt>Discount / credit</dt><dd>{{ customer.discount_amount }} kr.</dd></div>
+            <div><dt>Free until</dt><dd>{{ customer.free_until|default:"-" }}</dd></div>
+            <div><dt>Reason</dt><dd>{{ customer.discount_reason|default:"-" }}</dd></div>
+            <div><dt>Final billable amount</dt><dd>{{ customer.final_amount }} kr. með VSK</dd></div>
+        </dl>
+    </div>
+</section>
+
+<section class="content-band">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Manual maintenance</p>
+            <h2>Customer sheet controls</h2>
+        </div>
+        <span>Controls document the expected MVP fields before persistence.</span>
+    </div>
+    <form class="signup-form">
+        <div class="form-grid">
+            <label>
+                Billing category / plan
+                <input value="{{ customer.plan }}">
+            </label>
+            <label>
+                Gross amount with VSK
+                <input value="{{ customer.gross }}">
+            </label>
+            <label>
+                Manual status
+                <select>
+                    {% for state in tracking_states %}
+                    <option{% if state == customer.status %} selected{% endif %}>{{ state }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                Review status
+                <input value="{{ customer.review_status }}">
+            </label>
+            <label>
+                Discount amount
+                <input value="{{ customer.discount_amount }}">
+            </label>
+            <label>
+                Free until
+                <input value="{{ customer.free_until }}">
+            </label>
+        </div>
+        <label>
+            Operator notes
+            <textarea rows="4">{{ customer.notes }}</textarea>
+        </label>
+        <button class="button secondary" type="button">Prototype only</button>
+    </form>
+</section>
+
+<section class="content-band">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Audit trail</p>
+            <h2>Review notes</h2>
+        </div>
+        <span>Discounts, waivers, and overrides need who/when/reason in the real build.</span>
+    </div>
+    <div class="notification-list">
+        {% for entry in customer.audit %}
+        <article>
+            <strong>{{ entry }}</strong>
+            <span>Visible for operator/bookkeeper review.</span>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

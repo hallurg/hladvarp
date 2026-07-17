@@ -1,0 +1,61 @@
+{% extends "askrift/admin/base_admin.html" %}
+
+{% block admin_content %}
+<div class="admin-heading">
+    <div>
+        <p class="eyebrow">Viðskiptavinur</p>
+        <h1>{{ customer.name }}</h1>
+    </div>
+    <a class="button secondary" href="{% url 'askrift_admin_customers' %}">Til baka</a>
+</div>
+
+<div class="admin-grid two">
+    <section class="admin-panel">
+        <h2>Grunnupplýsingar</h2>
+        <dl class="fact-list">
+            <div><dt>Netfang</dt><dd>{{ customer.email }}</dd></div>
+            <div><dt>Fyrirtæki</dt><dd>{{ customer.organization|default:"-" }}</dd></div>
+            <div><dt>Hlaðvarp/vara</dt><dd>{{ customer.product_label|default:"-" }}</dd></div>
+            <div><dt>Staða</dt><dd>{{ customer.get_status_display }}</dd></div>
+            <div><dt>Flagg</dt><dd>{{ customer.internal_flag|default:"-" }}</dd></div>
+        </dl>
+    </section>
+    <section class="admin-panel">
+        <h2>Áskriftir og réttindi</h2>
+        <div class="notification-list">
+            {% for subscription in subscriptions %}
+            <article>
+                <strong>{{ subscription.plan.name }}</strong>
+                <span>{{ subscription.product.public_name }} · {{ subscription.get_status_display }}</span>
+                <p>Auglýsingakerfi: {% if subscription.advertising_visible %}sýnilegt og virkt{% else %}ekki sýnilegt{% endif %}</p>
+            </article>
+            {% empty %}
+            <article><strong>Engin áskrift</strong><span>Engin færsla tengd.</span></article>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+<div class="admin-grid two">
+    <section class="admin-panel">
+        <h2>Minnispunktar</h2>
+        <div class="notification-list">
+            {% for note in notes %}
+            <article><strong>{{ note.flag|default:"Minnispunktur" }}</strong><span>{{ note.created_at|date:"d.m.Y H:i" }} · {{ note.created_by }}</span><p>{{ note.note }}</p></article>
+            {% empty %}
+            <article><strong>Engir punktar</strong></article>
+            {% endfor %}
+        </div>
+    </section>
+    <section class="admin-panel">
+        <h2>Overrides</h2>
+        <div class="notification-list">
+            {% for override in overrides %}
+            <article><strong>{{ override.get_state_display }}</strong><span>{{ override.created_at|date:"d.m.Y H:i" }} · {{ override.created_by }}</span><p>{{ override.reason }}</p></article>
+            {% empty %}
+            <article><strong>Engin override</strong></article>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

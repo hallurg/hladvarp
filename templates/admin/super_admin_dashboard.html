@@ -1,0 +1,89 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'css/custom_admin.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="kn-dashboard-wrap">
+    <h2>Super Admin - Aðgangsstýring</h2>
+    <p>Stjórnaðu hvaða kerfiskaupendur hafa aðgang og opnaðu kerfi í sér glugga.</p>
+
+    <div class="kn-action-row">
+        <a class="button kn-icon-button" href="{% url 'admin:bokhald_superadminkerfiskaupandi_add' %}">
+            <span class="kn-icon" aria-hidden="true">&#10010;</span>
+            Ny skraning
+        </a>
+        <a class="button kn-icon-button" href="{% url 'admin:bokhald_superadminkerfiskaupandi_changelist' %}">
+            <span class="kn-icon" aria-hidden="true">&#128196;</span>
+            Sja allan lista
+        </a>
+    </div>
+
+    <table class="kn-dashboard-table">
+        <thead>
+            <tr>
+                <th>Item ID</th>
+                <th>Fyrirtæki</th>
+                <th>Kennitala</th>
+                <th>Ábyrgðarmaður</th>
+                <th>Heimilisfang</th>
+                <th>Sími</th>
+                <th>Sub-admin</th>
+                <th>Staða</th>
+                <th>Aðgerð</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for kaupandi in kerfiskaupendur %}
+            <tr>
+                <td>{{ kaupandi.item_id }}</td>
+                <td>{{ kaupandi.fyrirtaeki_nafn }}</td>
+                <td>{{ kaupandi.kennitala }}</td>
+                <td>{{ kaupandi.abyrgdarmaður }}</td>
+                <td>
+                    {{ kaupandi.heimilisfang }}<br>
+                    {{ kaupandi.postnumer }} {{ kaupandi.sveitarfelag }}<br>
+                    {{ kaupandi.land }}
+                </td>
+                <td>{{ kaupandi.fullt_simanumer }}</td>
+                <td>
+                    {% if kaupandi.sub_admin_notandi %}
+                        {{ kaupandi.sub_admin_notandi.fullt_nafn }} ({{ kaupandi.sub_admin_notandi.notandanafn }})
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    {% if kaupandi.er_virkur %}
+                        Virkur
+                    {% else %}
+                        Ovirkur
+                    {% endif %}
+                </td>
+                <td>
+                    <a class="button kn-icon-button" href="{% url 'admin:bokhald_superadminkerfiskaupandi_change' kaupandi.id %}">
+                        <span class="kn-icon" aria-hidden="true">&#9998;</span>
+                        Breyta
+                    </a>
+                    {% if kaupandi.er_virkur and kaupandi.sub_admin_notandi %}
+                        <a class="button kn-icon-button" href="{% url 'kerfiskaupandi-opna-kerfi' kaupandi.id %}?redirect=1" target="_blank" rel="noopener">
+                            <span class="kn-icon" aria-hidden="true">&#128640;</span>
+                            Opna kerfi
+                        </a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="9">Engir kerfiskaupendur fundust.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,167 @@
+{% extends "askrift/base.html" %}
+
+{% block title %}Hlaðvarp áskrift{% endblock %}
+{% block body_class %}hladvarp-storefront{% endblock %}
+{% block brand_mark %}<img src="https://hladvarp.com/logo.jpg" alt="Hlaðvarp.com">{% endblock %}
+{% block brand_title %}Hlaðvarp.com{% endblock %}
+{% block brand_subtitle %}Kaffispjall og aðrar vangaveltur{% endblock %}
+{% block top_nav %}
+<nav class="top-nav hladvarp-public-nav" aria-label="Hlaðvarp leiðir">
+    <label class="language-control" aria-label="Veldu tungumál">
+        <span class="language-bubble" aria-hidden="true"><span class="language-flag language-flag--is"></span></span>
+        <select class="language-select">
+            <option>IS</option>
+            <option>EN</option>
+            <option>DA</option>
+            <option>SV</option>
+            <option>NO</option>
+            <option>FI</option>
+            <option>PL</option>
+            <option>NL</option>
+            <option>FR</option>
+            <option>ES</option>
+            <option>PT</option>
+        </select>
+    </label>
+    <a href="https://hladvarp.com/nytt-hladvarp">Skrá nýtt hlaðvarp</a>
+    <a href="https://hladvarp.com/hlustandi/">Hlustandi</a>
+    <a class="nav-main" href="https://hladvarp.com/cp-admin/studio">Stjórnborð / innskráning</a>
+</nav>
+{% endblock %}
+
+{% block content %}
+{% if is_preview %}
+<div class="preview-ribbon">Admin preview: {{ storefront.get_status_display }}</div>
+{% endif %}
+
+<section class="hladvarp-page">
+    <div class="podcast-grid">
+        <article class="podcast-card intro-card">
+            <h1>Hlaðvarp.com</h1>
+            <p class="lead">{{ storefront.brand_note|default:"Kaffispjall og aðrar vangaveltur" }}</p>
+            <p>{{ storefront.subheadline }}</p>
+            <div class="hero-actions">
+                <a class="button primary" href="#manual">{{ storefront.primary_cta }}</a>
+                <a class="button secondary" href="https://hladvarp.com/">Til baka á Hlaðvarp.com</a>
+            </div>
+        </article>
+
+        <article class="podcast-card">
+            <h2>Þitt hlaðvarp?</h2>
+            <p>
+                Langar þig að vera með hlaðvarp? Skráðu beiðni og við förum yfir stöðuna með þér.
+                Við byrjum handvirkt svo allt sé á hreinu áður en greiðslukerfi er virkjað.
+            </p>
+            <div class="card-actions">
+                <a class="button primary" href="#manual">Opna</a>
+                <a class="button secondary" href="#plans">Áskriftarleiðir</a>
+            </div>
+        </article>
+
+        <article class="podcast-card featured-card">
+            <h2>{{ storefront.headline }}</h2>
+            <strong>Væntanlegt</strong>
+            <p>{{ storefront.intro_text }}</p>
+            <div class="card-actions">
+                <a class="button secondary" href="#manual">Handvirkt ferli</a>
+            </div>
+        </article>
+    </div>
+
+    <aside class="hladvarp-sidebar">
+        <section>
+            <h2>Nýjustu þættir</h2>
+            <p>Áskriftarflæðið notar sömu rólegu, hvítu Hlaðvarp.com framsetningu og heldur kaupferlinu nálægt hlustunarupplifuninni.</p>
+        </section>
+        <section>
+            <h2>Er eitthvað títt?</h2>
+            <p>Áskriftarsíðan skráir beiðnir fyrst. Greiðslusöfnun er ekki virk.</p>
+        </section>
+        <section>
+            <h2>Dagskrá dagsins</h2>
+            <button class="button primary" type="button">Spila dagskrá</button>
+            <p>Veldu þátt eða spilaðu dagskrána frá byrjun.</p>
+        </section>
+    </aside>
+</section>
+
+<section id="plans" class="hladvarp-section">
+    <div class="section-heading">
+        <div>
+            <h2>Áskriftarleiðir</h2>
+            <p>Verð eru sýnd með VSK. Engin greiðsla er tekin hér.</p>
+        </div>
+    </div>
+    <div class="podcast-grid plans-like-podcasts">
+        {% for plan in plans %}
+        <article class="podcast-card plan-card{% if plan.advertising_allowed_when_paid %} featured{% endif %}">
+            <h2>{{ plan.name }}</h2>
+            <p>{{ plan.public_description }}</p>
+            <p class="plan-price">
+                {% if plan.gross_price %}{{ plan.gross_price|floatformat:0 }} kr. / {{ plan.get_billing_interval_display|lower }}{% else %}{{ plan.get_billing_interval_display }}{% endif %}
+            </p>
+            <dl class="fact-list compact">
+                <div><dt>Nettó</dt><dd>{{ plan.net_price|floatformat:0 }} kr.</dd></div>
+                <div><dt>VSK</dt><dd>{{ plan.vat_amount|floatformat:0 }} kr.</dd></div>
+                <div><dt>Auglýsingar</dt><dd>{% if plan.advertising_allowed_when_paid %}Aðeins þegar greitt{% else %}Ekki virkt{% endif %}</dd></div>
+            </dl>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="hladvarp-section">
+    <div class="podcast-grid two">
+        <article class="podcast-card">
+            <h2>Ókeypis má vera ókeypis</h2>
+            <p>Engar auglýsingar, engin kostun, engin greidd kynning og engar áskriftartekjur.</p>
+        </article>
+        <article class="podcast-card">
+            <h2>Tekjuöflun þarf áskrift</h2>
+            <p>Kostun, auglýsingar, greidd kynning eða sambærilegar tekjur fara í handvirkt áskriftarferli.</p>
+        </article>
+    </div>
+</section>
+
+{% if is_preview and storefront.preview_note %}
+<section class="hladvarp-section">
+    <article class="podcast-card">
+        <h2>Preview áður en publish er valið</h2>
+        <p>{{ storefront.preview_note }}</p>
+    </article>
+</section>
+{% endif %}
+
+<section id="manual" class="hladvarp-section form-band">
+    <div class="section-heading">
+        <div>
+            <h2>Senda til yfirferðar</h2>
+            <p>Þetta stofnar review færslu. Engin greiðsla er tekin.</p>
+        </div>
+    </div>
+
+    {% if signup_result %}
+    <div class="confirmation" role="status">
+        <strong>Beiðni móttekin.</strong>
+        <p>
+            {{ signup_result.customer.product_label }} var skráð sem {{ signup_result.subscription.get_status_display }}.
+            Operator getur nú opnað færsluna í admin og ákveðið næstu skref.
+        </p>
+    </div>
+    {% endif %}
+
+    <form class="signup-form hladvarp-form" method="post" action="#manual">
+        {% csrf_token %}
+        <div class="form-grid">
+            {% for field in form %}
+            <label>
+                {{ field.label }}
+                {{ field }}
+                {% if field.errors %}<span class="field-error">{{ field.errors|striptags }}</span>{% endif %}
+            </label>
+            {% endfor %}
+        </div>
+        <button class="button primary" type="submit">{{ storefront.primary_cta }}</button>
+    </form>
+</section>
+{% endblock %}

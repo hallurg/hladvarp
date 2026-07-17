@@ -1,0 +1,16 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/custom_admin.css' %}">
+{% endblock %}
+
+{% block object-tools-items %}
+    {{ block.super }}
+    <li>
+        <a href="?export_pdf=1" class="button">
+            📄 Exporta sem PDF
+        </a>
+    </li>
+{% endblock %}

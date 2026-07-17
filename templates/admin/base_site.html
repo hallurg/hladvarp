@@ -1,0 +1,40 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/custom_admin.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script src="{% static 'js/admin_splashscreen.js' %}" defer></script>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">
+        <img src="{% static 'img/kn-logo.png' %}" alt="Kaupfjelag logo" class="kn-logo" onerror="this.onerror=null;this.src='{% static 'img/kn-logo.svg' %}';">
+        Kaupfjelag Nærsveitamanna - Stjórnunarkerfi
+    </a>
+</h1>
+{% endblock %}
+
+{% block nav-global %}
+{% if request.user.is_authenticated and request.user.notendategund == 'SUPER_ADMIN' %}
+<div class="kn-top-nav">
+    <a href="{% url 'admin:super_admin_dashboard' %}" class="button kn-icon-button"><span class="kn-icon" aria-hidden="true">&#9881;</span> Super Admin Aðgangsstýring</a>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block footer %}
+    {{ block.super }}
+    <div id="kn-splash" class="kn-splash" aria-hidden="true">
+        <div class="kn-splash-card">
+            <img src="{% static 'img/kn-logo.png' %}" alt="Kaupfjelag logo" class="kn-splash-logo" onerror="this.onerror=null;this.src='{% static 'img/kn-logo.svg' %}';">
+            <h2>Kaupfjelag Nærsveitamanna</h2>
+            <p>Stjórnunarkerfi er að opnast...</p>
+        </div>
+    </div>
+{% endblock %}

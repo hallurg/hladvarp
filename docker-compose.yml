@@ -1,0 +1,119 @@
+services:
+  db:
+    image: postgres:16
+    container_name: kn_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - kn_net
+
+  redis:
+    image: redis:7-alpine
+    container_name: kn_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - kn_net
+
+  web:
+    build: .
+    container_name: kn_web
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      REDIS_URL: redis://redis:6379/0
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    depends_on:
+      - db
+      - redis
+    networks:
+      - kn_net
+
+  celery_worker:
+    build: .
+    container_name: kn_celery_worker
+    restart: unless-stopped
+    command: celery -A kaupfjelag_kerfi worker -l info
+    env_file:
+      - .env
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - db
+      - redis
+      - web
+    networks:
+      - kn_net
+
+  celery_beat:
+    build: .
+    container_name: kn_celery_beat
+    restart: unless-stopped
+    command: celery -A kaupfjelag_kerfi beat -l info
+    env_file:
+      - .env
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - db
+      - redis
+      - web
+    networks:
+      - kn_net
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: kn_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN}
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - static_volume:/app/staticfiles:ro
+      - media_volume:/app/media:ro
+      - certbot_etc:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    depends_on:
+      - web
+    networks:
+      - kn_net
+
+  certbot:
+    image: certbot/certbot:latest
+    container_name: kn_certbot
+    volumes:
+      - certbot_etc:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    networks:
+      - kn_net
+
+volumes:
+  postgres_data:
+  redis_data:
+  static_volume:
+  media_volume:
+  certbot_etc:
+  certbot_www:
+
+networks:
+  kn_net:
+    driver: bridge

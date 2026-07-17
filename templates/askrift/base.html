@@ -1,0 +1,46 @@
+{% load static %}
+<!doctype html>
+<html lang="is">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Áskrift | Kaupfjelag{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/askrift.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    <header class="site-header" aria-label="Kaupfjelag áskrift">
+        <a class="brand" href="/askrift/">
+            <span class="brand-mark">{% block brand_mark %}KN{% endblock %}</span>
+            <span>
+                <strong>{% block brand_title %}Kaupfjelag{% endblock %}</strong>
+                <small>{% block brand_subtitle %}Áskrift og reikningssamband{% endblock %}</small>
+            </span>
+        </a>
+        {% block top_nav %}
+        <nav class="top-nav" aria-label="Áskriftarsíður">
+            <a href="/askrift/">Yfirlit</a>
+            <a href="/askrift/hladvarp/">Hlaðvarp</a>
+            <a href="/askrift/admin/">Admin</a>
+            <a href="/askrift/admin/preview/hladvarp/">Preview</a>
+        </nav>
+        {% endblock %}
+    </header>
+
+    <main>
+        {% if messages %}
+        <div class="message-stack" role="status">
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <span>© 2026 Kaupfjelag Nærsveitamanna</span>
+        <span>Engin greiðslusöfnun er virk í þessari útgáfu.</span>
+    </footer>
+</body>
+</html>

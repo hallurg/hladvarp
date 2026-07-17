@@ -1,0 +1,132 @@
+{% extends "askrift/base.html" %}
+
+{% block title %}Pricing admin | Kaupfjelag{% endblock %}
+
+{% block content %}
+<section class="hero operator-hero">
+    <div class="hero-copy">
+        <p class="eyebrow">Pricing admin</p>
+        <h1>VAT-inclusive pricing control.</h1>
+        <p>
+            CEO/operator view for product pricing content, storefront visibility, ordering, CTA text, and VAT breakdown.
+            Customer-facing amounts are gross prices with VSK included.
+        </p>
+        <div class="hero-actions">
+            <a class="button primary" href="#plans">Review plans</a>
+            <a class="button secondary" href="/askrift/operator/">Operator dashboard</a>
+        </div>
+    </div>
+    <div class="ops-panel" aria-label="VAT rule">
+        <article>
+            <span>Customer display</span>
+            <strong>Gross</strong>
+        </article>
+        <article>
+            <span>VAT rate in prototype</span>
+            <strong>{{ vat_rate }}%</strong>
+        </article>
+        <article>
+            <span>Payment collection</span>
+            <strong>Off</strong>
+        </article>
+    </div>
+</section>
+
+<section id="plans" class="content-band">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Plans</p>
+            <h2>Storefront pricing content</h2>
+        </div>
+        <span>Prototype rows. No database update is made here.</span>
+    </div>
+    <div class="plan-grid pricing-grid">
+        {% for plan in plans %}
+        <article class="plan-card{% if plan.visibility == 'visible' %} featured{% endif %}">
+            <div class="plan-topline">
+                <span class="status">{{ plan.visibility }}</span>
+                <span class="plan-price">{{ plan.gross }} kr. með VSK</span>
+            </div>
+            <h3>{{ plan.name }}</h3>
+            <p class="plan-label">{{ plan.product }} · {{ plan.cycle }}</p>
+            <p>{{ plan.public_description }}</p>
+            <dl class="fact-list compact">
+                <div><dt>Net for invoice</dt><dd>{{ plan.net }} kr.</dd></div>
+                <div><dt>VSK</dt><dd>{{ plan.vat }} kr.</dd></div>
+                <div><dt>CTA</dt><dd>{{ plan.cta }}</dd></div>
+                <div><dt>Order</dt><dd>{{ plan.order }}</dd></div>
+            </dl>
+            {% if plan.promo_note %}<p>{{ plan.promo_note }}</p>{% endif %}
+        </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="split-band form-band">
+    <div>
+        <p class="eyebrow">Preview calculator</p>
+        <h2>Check gross, net, and VSK before publishing.</h2>
+        <p>
+            This uses the VAT-inclusive rule: net amount equals gross divided by 1.24 at the current prototype rate.
+            It does not create a plan, charge a customer, or send data to an invoice provider.
+        </p>
+    </div>
+    <form class="signup-form" method="post">
+        {% csrf_token %}
+        <label>
+            Product / storefront
+            <input name="product" value="Hlaðvarp">
+        </label>
+        <label>
+            Plan name
+            <input name="name" value="Tekjuöflun">
+        </label>
+        <label>
+            Gross amount with VSK
+            <input name="gross_amount" value="12400">
+        </label>
+        <label>
+            Billing cycle
+            <input name="cycle" value="Mánaðarlega">
+        </label>
+        <label>
+            Visibility
+            <select name="visibility">
+                <option>draft</option>
+                <option>visible</option>
+                <option>hidden</option>
+            </select>
+        </label>
+        <button class="button primary" type="submit">Preview VAT split</button>
+    </form>
+</section>
+
+{% if preview %}
+<section class="content-band">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Preview result</p>
+            <h2>{{ preview.name }}</h2>
+        </div>
+        <span>{{ preview.product }} · {{ preview.cycle }} · {{ preview.visibility }}</span>
+    </div>
+    <div class="detail-grid">
+        <article>
+            <span>Customer-facing gross</span>
+            <strong>{{ preview.gross }} kr.</strong>
+            <p>Shown as verð með VSK.</p>
+        </article>
+        <article>
+            <span>Net/base line</span>
+            <strong>{{ preview.net }} kr.</strong>
+            <p>Use this when an invoice tool adds VAT on top.</p>
+        </article>
+        <article>
+            <span>VSK amount</span>
+            <strong>{{ preview.vat }} kr.</strong>
+            <p>Estimated at {{ preview.vat_rate }}%.</p>
+        </article>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

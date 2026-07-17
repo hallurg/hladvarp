@@ -1,0 +1,519 @@
+/* Kaupfjelag Nærsveitamanna - Custom Admin Styling */
+
+/* Litir frá lógói */
+:root {
+    --kn-appelsínugult: #D97525;
+    --kn-blá: #2E3192;
+    --kn-hvítt: #FFFFFF;
+    --kn-svart: #000000;
+    --kn-ljós-grár: #F5F5F5;
+    --kn-lina-ljos: #E9EEF7;
+    --kn-lina-ljosari: #F7FAFF;
+    --kn-dark-svarti: #141821;
+    --kn-dark-svartari: #1B2230;
+    --kn-dark-lina: #2C3649;
+    --kn-dark-texti: #E8EEF9;
+}
+
+/* Aðal bakgrunnur - blár með hvítu letri */
+body {
+    background-color: var(--kn-blá) !important;
+    color: var(--kn-hvítt) !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header */
+#header {
+    background-color: var(--kn-hvítt) !important;
+    border-bottom: 3px solid var(--kn-appelsínugult);
+}
+
+#branding h1, #branding h1 a:link, #branding h1 a:visited {
+    color: var(--kn-blá) !important;
+}
+
+#site-name {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#site-name a {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.kn-logo {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+}
+
+.kn-top-nav {
+    display: flex;
+    justify-content: flex-end;
+    padding: 8px 12px;
+    gap: 8px;
+}
+
+.kn-dashboard-wrap {
+    background: var(--kn-hvítt, #FFFFFF);
+    color: var(--kn-svart);
+    border: 2px solid var(--kn-appelsínugult);
+    border-radius: 8px;
+    padding: 16px;
+    margin: 16px 0;
+}
+
+.kn-dashboard-wrap h2 {
+    margin-top: 0;
+}
+
+.kn-dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.kn-dashboard-table th,
+.kn-dashboard-table td {
+    padding: 10px;
+    border-bottom: 1px solid #E9EEF7;
+    text-align: left;
+}
+
+.kn-action-row {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0 16px 0;
+    flex-wrap: wrap;
+}
+
+.kn-icon-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.kn-icon {
+    font-size: 14px;
+    line-height: 1;
+}
+
+/* Splash screen */
+body.kn-splash-lock {
+    overflow: hidden;
+}
+
+.kn-splash {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 20% 10%, #3E56B0 0%, #2E3192 45%, #1E235F 100%);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.kn-splash.is-visible {
+    display: flex;
+}
+
+.kn-splash-card {
+    width: min(520px, 90vw);
+    text-align: center;
+    background: rgba(255, 255, 255, 0.94);
+    color: var(--kn-svart);
+    border: 3px solid var(--kn-appelsínugult);
+    border-radius: 16px;
+    padding: 28px 22px;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+    animation: knSplashIn 260ms ease-out;
+}
+
+.kn-splash-logo {
+    width: 120px;
+    height: auto;
+    margin-bottom: 12px;
+}
+
+.kn-splash-card h2 {
+    margin: 6px 0;
+    color: var(--kn-blá);
+}
+
+.kn-splash-card p {
+    margin: 0;
+    color: #33405F;
+}
+
+@keyframes knSplashIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Navigation */
+#nav-global {
+    background-color: var(--kn-blá) !important;
+}
+
+#nav-global a {
+    color: var(--kn-hvítt) !important;
+}
+
+#nav-global a:hover {
+    background-color: var(--kn-appelsínugult) !important;
+    color: var(--kn-svart) !important;
+}
+
+/* Hnappar - appelsínugulir með svörtu letri */
+.button, input[type=submit], input[type=button], .submit-row input, button {
+    background-color: var(--kn-appelsínugult) !important;
+    color: var(--kn-svart) !important;
+    border: 2px solid var(--kn-svart) !important;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.button:hover, input[type=submit]:hover, input[type=button]:hover, button:hover {
+    background-color: #E68530 !important;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.button:active, input[type=submit]:active, input[type=button]:active, button:active {
+    transform: scale(0.98);
+}
+
+/* Delete button */
+.deletelink, .deletelink-box {
+    background-color: #DC3545 !important;
+    color: var(--kn-hvítt) !important;
+}
+
+/* Innsláttarreitir - hvítir með svörtum texta */
+input[type=text], input[type=password], input[type=email], input[type=url], 
+input[type=number], input[type=date], input[type=time], input[type=datetime-local],
+textarea, select {
+    background-color: var(--kn-hvítt) !important;
+    color: var(--kn-svart) !important;
+    border: 2px solid var(--kn-appelsínugult) !important;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+input[type=text]:focus, input[type=password]:focus, input[type=email]:focus,
+textarea:focus, select:focus {
+    border-color: var(--kn-blá) !important;
+    box-shadow: 0 0 5px rgba(46, 49, 146, 0.5);
+    outline: none;
+}
+
+/* Content area - hvít með svörtum texta */
+#content, .module, .dashboard, .breadcrumbs {
+    background-color: var(--kn-hvítt) !important;
+    color: var(--kn-svart) !important;
+    border: 2px solid var(--kn-appelsínugult);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+/* Töflur */
+table {
+    background-color: var(--kn-hvítt) !important;
+    color: var(--kn-svart) !important;
+}
+
+thead th {
+    background-color: var(--kn-appelsínugult) !important;
+    color: var(--kn-svart) !important;
+    font-weight: bold;
+    padding: 12px;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: var(--kn-ljós-grár) !important;
+}
+
+tbody tr:hover {
+    background-color: rgba(217, 117, 37, 0.2) !important;
+}
+
+/* Mælaborð */
+.dashboard .module {
+    background-color: var(--kn-hvítt) !important;
+    color: var(--kn-svart) !important;
+    border: 2px solid var(--kn-appelsínugult);
+}
+
+.dashboard .module h2 {
+    background-color: var(--kn-appelsínugult) !important;
+    color: var(--kn-svart) !important;
+    padding: 10px;
+    border-radius: 5px 5px 0 0;
+}
+
+.dashboard .module table {
+    background-color: var(--kn-hvítt) !important;
+}
+
+/* Messages */
+.messagelist li {
+    background-color: var(--kn-appelsínugult) !important;
+    color: var(--kn-svart) !important;
+}
+
+.messagelist .success {
+    background-color: #28a745 !important;
+    color: var(--kn-hvítt) !important;
+}
+
+.messagelist .error {
+    background-color: #dc3545 !important;
+    color: var(--kn-hvítt) !important;
+}
+
+/* Sidebar */
+#content-related {
+    background-color: var(--kn-hvítt) !important;
+    color: var(--kn-svart) !important;
+}
+
+/* Links */
+a {
+    color: var(--kn-blá) !important;
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--kn-appelsínugult) !important;
+    text-decoration: underline;
+}
+
+/* Breadcrumbs */
+.breadcrumbs {
+    background-color: var(--kn-blá) !important;
+    color: var(--kn-hvítt) !important;
+    border-color: var(--kn-appelsínugult) !important;
+}
+
+.breadcrumbs a {
+    color: var(--kn-hvítt) !important;
+}
+
+.breadcrumbs a:hover {
+    color: var(--kn-appelsínugult) !important;
+}
+
+/* Header utilities on white header */
+#user-tools,
+#user-tools *,
+#header a,
+#header a:link,
+#header a:visited {
+    color: var(--kn-blá) !important;
+}
+
+#user-tools a:hover,
+#header a:hover {
+    color: var(--kn-appelsínugult) !important;
+}
+
+/* Light mode table polish */
+#changelist table,
+#changelist-form table,
+table {
+    border: 1px solid var(--kn-lina-ljos) !important;
+}
+
+#changelist .results th,
+#changelist .results td,
+table th,
+table td {
+    border-bottom: 1px solid var(--kn-lina-ljos) !important;
+}
+
+#changelist .results tbody tr:nth-child(odd),
+tbody tr:nth-child(odd) {
+    background-color: var(--kn-lina-ljosari) !important;
+}
+
+#changelist .results tbody tr:nth-child(even),
+tbody tr:nth-child(even) {
+    background-color: var(--kn-hvítt) !important;
+}
+
+/* Force fully consistent dark mode rows + text */
+html[data-theme="dark"] #content,
+html[data-theme="dark"] .module,
+html[data-theme="dark"] .dashboard,
+html[data-theme="dark"] #changelist-filter,
+html[data-theme="dark"] #content-related,
+html[data-theme="dark"] .breadcrumbs {
+    background-color: var(--kn-dark-svartari) !important;
+    color: var(--kn-dark-texti) !important;
+    border-color: var(--kn-dark-lina) !important;
+}
+
+html[data-theme="dark"] table,
+html[data-theme="dark"] #changelist table,
+html[data-theme="dark"] #changelist-form table {
+    background-color: var(--kn-dark-svartari) !important;
+    color: var(--kn-dark-texti) !important;
+    border: 1px solid var(--kn-dark-lina) !important;
+}
+
+html[data-theme="dark"] #changelist .results th,
+html[data-theme="dark"] #changelist .results td,
+html[data-theme="dark"] table th,
+html[data-theme="dark"] table td {
+    color: var(--kn-dark-texti) !important;
+    border-bottom: 1px solid var(--kn-dark-lina) !important;
+}
+
+html[data-theme="dark"] #changelist .results tbody tr:nth-child(odd),
+html[data-theme="dark"] tbody tr:nth-child(odd) {
+    background-color: var(--kn-dark-svarti) !important;
+}
+
+html[data-theme="dark"] #changelist .results tbody tr:nth-child(even),
+html[data-theme="dark"] tbody tr:nth-child(even) {
+    background-color: var(--kn-dark-svartari) !important;
+}
+
+html[data-theme="dark"] #changelist .results tbody tr:hover,
+html[data-theme="dark"] tbody tr:hover {
+    background-color: #253049 !important;
+}
+
+html[data-theme="dark"] a {
+    color: #C9DCFF !important;
+}
+
+html[data-theme="dark"] .breadcrumbs a,
+html[data-theme="dark"] #changelist-filter a,
+html[data-theme="dark"] #content-related a {
+    color: #DCE8FF !important;
+}
+
+/* Pagination */
+.paginator {
+    background-color: var(--kn-hvítt) !important;
+    color: var(--kn-svart) !important;
+}
+
+.paginator a {
+    background-color: var(--kn-appelsínugult) !important;
+    color: var(--kn-svart) !important;
+    padding: 5px 10px;
+    margin: 0 2px;
+    border-radius: 3px;
+}
+
+/* Filter sidebar */
+#changelist-filter {
+    background-color: var(--kn-hvítt) !important;
+    color: var(--kn-svart) !important;
+    border: 2px solid var(--kn-appelsínugult);
+}
+
+#changelist-filter h2 {
+    background-color: var(--kn-appelsínugult) !important;
+    color: var(--kn-svart) !important;
+}
+
+/* Form errors */
+.errorlist {
+    background-color: #dc3545 !important;
+    color: var(--kn-hvítt) !important;
+}
+
+/* Help text */
+.help, .help-block {
+    color: var(--kn-svart) !important;
+    background-color: var(--kn-ljós-grár) !important;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+/* Cards/Boxes */
+.card, .box {
+    background-color: var(--kn-hvítt) !important;
+    color: var(--kn-svart) !important;
+    border: 2px solid var(--kn-appelsínugult);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 10px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card-header, .box-header {
+    background-color: var(--kn-appelsínugult) !important;
+    color: var(--kn-svart) !important;
+    padding: 10px;
+    border-radius: 5px 5px 0 0;
+    font-weight: bold;
+}
+
+/* Status badges */
+.badge {
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+}
+
+.badge-success {
+    background-color: #28a745 !important;
+    color: var(--kn-hvítt) !important;
+}
+
+.badge-warning {
+    background-color: var(--kn-appelsínugult) !important;
+    color: var(--kn-svart) !important;
+}
+
+.badge-danger {
+    background-color: #dc3545 !important;
+    color: var(--kn-hvítt) !important;
+}
+
+.badge-info {
+    background-color: var(--kn-blá) !important;
+    color: var(--kn-hvítt) !important;
+}
+
+/* Loading spinner */
+.spinner {
+    border: 4px solid var(--kn-ljós-grár);
+    border-top: 4px solid var(--kn-appelsínugult);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+    
+    .button, input[type=submit], input[type=button], button {
+        padding: 8px 15px;
+    }
+}

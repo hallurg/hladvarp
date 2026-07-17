@@ -1,0 +1,24 @@
+{% extends "askrift/base.html" %}
+
+{% block title %}Account admin | KN platform{% endblock %}
+{% block body_class %}account-admin{% endblock %}
+
+{% block content %}
+<section class="admin-shell">
+    <aside class="admin-rail" aria-label="Account admin">
+        <strong>Account admin</strong>
+        <nav>
+            {% for label, url_name in admin_sections %}
+            <a class="{% if active_admin_section == label %}active{% endif %}" href="{% url url_name %}">{{ label }}</a>
+            {% endfor %}
+            <a href="{% url 'askrift_admin_payments' %}">Greiðslusaga</a>
+            <a href="{% url 'askrift_admin_overrides' %}">Overrides</a>
+            <a href="{% url 'askrift_admin_notes' %}">Minnispunktar</a>
+            <a href="{% url 'askrift_admin_export' %}">CSV export</a>
+        </nav>
+    </aside>
+    <div class="admin-main">
+        {% block admin_content %}{% endblock %}
+    </div>
+</section>
+{% endblock %}

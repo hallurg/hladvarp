@@ -1,0 +1,57 @@
+{% extends "askrift/base.html" %}
+
+{% block title %}Áskrift | KN platform{% endblock %}
+
+{% block content %}
+<section class="hero compact-hero">
+    <div class="hero-copy">
+        <p class="eyebrow">Account platform</p>
+        <h1>Áskrift, reikningar og réttindi á einum stað.</h1>
+        <p>
+            Þetta er sameiginlegur reikningsgrunnur fyrir KN vörur. Customer-facing síður mega líta út
+            eins og viðkomandi vara, en admin heldur utan um vörur, verð, viðskiptavini, áskriftir og réttindi.
+        </p>
+        <div class="hero-actions">
+            <a class="button primary" href="/askrift/hladvarp/">Opna Hlaðvarp áskrift</a>
+            <a class="button secondary" href="/askrift/admin/">Opna admin</a>
+        </div>
+    </div>
+    <div class="ops-panel">
+        <article>
+            <span>Virk vara</span>
+            <strong>{{ product.public_name }}</strong>
+        </article>
+        <article>
+            <span>Birting</span>
+            <strong>{{ storefront.get_status_display }}</strong>
+        </article>
+        <article>
+            <span>Greiðslukerfi</span>
+            <strong>Óvirkt</strong>
+        </article>
+    </div>
+</section>
+
+<section class="content-band">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Mörk</p>
+            <h2>Hvað þetta gerir og gerir ekki</h2>
+        </div>
+    </div>
+    <div class="tracking-grid">
+        <article>
+            <h3>Gerir núna</h3>
+            <p>Heldur utan um vörur, verð, storefront texta, viðskiptavini, áskriftarstöðu, reikningsdrög og entitlement-reglur.</p>
+        </article>
+        <article>
+            <h3>Handvirkt fyrst</h3>
+            <p>Umsóknir verða til sem review færslur. Admin getur merkt stöður og greiðslusögu handvirkt.</p>
+        </article>
+        <article>
+            <h3>Ekki virkt enn</h3>
+            <p>Engin greiðslusöfnun, enginn provider, engar webhooks og engin leyndarmál eru tengd þessu MVP.</p>
+        </article>
+    </div>
+</section>
+{% endblock %}
