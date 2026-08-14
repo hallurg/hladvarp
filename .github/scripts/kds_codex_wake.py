@@ -33,6 +33,7 @@ WAKE_TOKENS = (
 )
 
 REPORT_TOKEN = "## codex engineering report"
+COMPANY_TEST_TOKEN = "## fyrirtækjaprófun"
 
 
 @dataclass
@@ -45,6 +46,7 @@ class WakeContext:
     should_ack: bool
     should_dispatch: bool
     reason: str
+    comment_url: str = ""
 
 
 def load_event() -> dict[str, Any]:
@@ -100,6 +102,20 @@ def issue_comment_context(event: dict[str, Any]) -> WakeContext:
     issue_number = int(issue.get("number") or 7)
     body = str(comment.get("body") or "")
     body_l = body.lower()
+    comment_url = str(comment.get("html_url") or "")
+
+    if body_l.lstrip().startswith(COMPANY_TEST_TOKEN):
+        return WakeContext(
+            event_name="issue_comment",
+            repo=repo,
+            actor=actor,
+            issue_number=issue_number,
+            command=body,
+            should_ack=True,
+            should_dispatch=True,
+            reason="company test report",
+            comment_url=comment_url,
+        )
 
     # Do not recursively treat actual reports as wake commands.
     # Important: a wake request may quote the marker as an expected result, so only
@@ -114,6 +130,7 @@ def issue_comment_context(event: dict[str, Any]) -> WakeContext:
             should_ack=False,
             should_dispatch=False,
             reason="comment is a Codex report, not a wake command",
+            comment_url=comment_url,
         )
 
     should_dispatch = any(token in body_l for token in WAKE_TOKENS)
@@ -126,6 +143,29 @@ def issue_comment_context(event: dict[str, Any]) -> WakeContext:
         should_ack=should_dispatch,
         should_dispatch=should_dispatch,
         reason="matched wake token" if should_dispatch else "no wake token",
+        comment_url=comment_url,
+    )
+
+
+def company_test_notification(ctx: WakeContext, dispatched: bool) -> str:
+    lines = [line.strip() for line in ctx.command.splitlines() if line.strip()]
+    title = next((line.removeprefix("## ") for line in lines if line.startswith("## ")), "KN fyrirtækjaprófun")
+    status = next((line for line in lines if line.startswith("**Staða:**")), "**Staða:** ný skýrsla")
+    failures = [line for line in lines if "— FAIL" in line][:8]
+    failure_text = "\n".join(failures) if failures else "Engin atriði voru merkt FAIL í þessari sendingu."
+    codex_state = (
+        "Codex-bridge tók við skýrslunni."
+        if dispatched
+        else "Skýrslan er komin í GitHub/Mission Control og bíður Codex-yfirferðar."
+    )
+    source = f"[Opna upprunalegu skýrsluna]({ctx.comment_url})" if ctx.comment_url else f"Opna mál #{ctx.issue_number}."
+    return (
+        "@hallurg\n\n"
+        f"## KN prófunartilkynning — {title}\n\n"
+        f"{status}\n\n"
+        f"{failure_text}\n\n"
+        f"{codex_state} {source}\n\n"
+        "Þessi færsla er send af GitHub Actions svo hún fari í sömu GitHub-tölvupósttilkynningar og aðrar Codex-færslur."
     )
 
 
@@ -241,7 +281,9 @@ def main() -> int:
         return 0
 
     if ctx.should_ack:
-        if ok:
+        if ctx.reason == "company test report":
+            body = company_test_notification(ctx, ok)
+        elif ok:
             body = (
                 "## KDS WAKE BRIDGE ACK\n\n"
                 "GitHub received the Codex wake request and dispatched it to the configured Codex bridge backend.\n\n"
