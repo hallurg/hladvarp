@@ -42,4 +42,6 @@ jobs:
           CODEX_BRIDGE_WEBHOOK_URL: ${{ secrets.CODEX_BRIDGE_WEBHOOK_URL }}
           CODEX_BRIDGE_SHARED_SECRET: ${{ secrets.CODEX_BRIDGE_SHARED_SECRET }}
           KDS_ALLOWED_ACTORS: "hallurg"
-        run: python3 .github/scripts/kds_codex_wake.py
+        run: |
+          python3 .github/scripts/test_kds_codex_wake.py
+          python3 .github/scripts/kds_codex_wake.py
